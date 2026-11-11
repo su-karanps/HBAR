@@ -1,0 +1,14 @@
+# Same as data.yaml with stride 32 (non-overlapping tiling): used to export token sequences
+# for the autoregressive (AR) model, so each TR is covered exactly once.
+
+data:
+  index_path: "/path/to/build/merged_index_uncompressed.json"
+  layout_dir: "/path/to/build/layout_shared"
+  # Subject-disjoint train/val/test. Training and model selection only ever see
+  # train/val; every reported number comes from the test subjects.
+  subject_split_json: "data/subject_splits/hcp_ya_1096_80_10_10_seed0.json"
+  window_size: 32
+  stride: 32
+  cache_items: 8
+  shuffle_train: true
+  max_windows_per_subject: null

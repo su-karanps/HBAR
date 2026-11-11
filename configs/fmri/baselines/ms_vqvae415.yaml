@@ -1,0 +1,65 @@
+# MS-VQVAE at ~415x: learned (atlas-free) multiscale VQ-VAE. 12,358 chunk tokens -> 12,358 middle
+# codes -> 1,024 learned top slots; quantized at middle and top only, one token per slot per
+# window, EMA residual VQ with dead-code restarts on a 32-d projection.
+# Rate: middle [512, 512] = 18 bits, top [4096] = 12 bits ->
+# 12358*18 + 1024*12 = 234,732 bits per 32-TR window (415.5x).
+# Note: trainer_fmri.py applies the recon_chunk / delta_chunk terms only to npq_hier_residual
+# models, so this model trains on voxel recon + delta + vq; those two lambdas are inert here.
+# No atlas information enters the encoder or decoder.
+# Use with configs/fmri/data.yaml.
+
+model:
+  type: "model2"
+  token_dim: 192
+  n_middle: 12358
+  n_top: 1024
+  bottom_depth: 3
+  middle_depth: 2
+  top_depth: 1
+  num_heads: 8
+  quantizer: "rvq"
+  quant_dim: 32
+  middle_rvq_sizes: [512, 512]
+  top_rvq_sizes: [4096]
+  commitment_weight: 0.25
+  decoder_use_bottom_skip: false
+  chunk_pos_embed: true   # learned per-chunk position embedding (no atlas, no data)
+  middle_identity: true   # middle level = chunk tokens (one code per chunk); chunk->top grouping learned
+
+loss:
+  lambdas:
+    recon: 1.0
+    delta: 0.5
+    vq: 1.0
+    recon_chunk: 10.0
+    delta_chunk: 2.0
+
+train:
+  epochs: 10
+  batch_size: 4
+  num_workers: 4
+  lr: 2.0e-4
+  weight_decay: 0.01
+  use_amp: true
+  amp_dtype: "bf16"
+  fused_adamw: true
+  enable_tf32: true
+  matmul_precision: "high"
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 4
+  compile: false
+  compile_mode: "default"
+  compile_fullgraph: false
+  chunk_loss_fn: "l1"
+  vq_commitment_warmup_steps: 4000
+  vq_commitment_start: 0.01
+  vq_commitment_end: 0.1
+  bsq_entropy_warmup_steps: 4000
+  bsq_zeta_start: 0.1
+  bsq_zeta_end: 1.0
+  grad_accum_steps: 4
+  grad_clip_norm: 1.0
+  skip_nonfinite_loss: true
+  log_interval: 10
+  ckpt_every: 1

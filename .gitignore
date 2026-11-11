@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+wandb/
+logs/
+runs/
+results/
+tokens/
+tokens_ar/
+ar/
+checkpoints

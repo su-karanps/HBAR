@@ -1,0 +1,85 @@
+# Shuffled grouping control (52x): identical to hbar52_fixed.yaml except
+# shuffle_chunk_to_parcel_seed: 0, which randomly permutes the chunk -> parcel assignment while
+# preserving every parcel's group size.
+# Use with configs/fmri/data.yaml.
+
+model:
+  type: "npq_hier_residual"
+  token_dim: 192
+  bottom_depth: 3
+  middle_depth: 2
+  top_depth: 1
+  num_heads: 8
+  n_parcels: 1024
+  n_networks: 18
+  n_levels: 3
+  cross_scale_mode: "fixed"
+  shuffle_chunk_to_parcel_seed: 0
+
+  n_time_tokens_bottom: 8
+  n_time_tokens_middle: 8
+  n_time_tokens_top: 8
+  bottom_temporal_summary: "window_split"
+  bottom_encoder_hidden: 64
+
+  bottom_recon_head_layers: 3
+  bottom_use_voxel_slots: true
+  bottom_use_parcel_cond: true
+
+  # 18 bits per time slot: 3 groups of 6 bits
+  bottom_quant_dim: 18
+  bottom_group_size: 6
+
+  middle_quant_dim: 12
+  middle_group_size: 4
+
+  top_quant_dim: 6
+  top_group_size: 3
+
+  bsq_beta: 0.1
+  bsq_gamma0: 1.0
+  bsq_gamma: 1.0
+  bsq_zeta: 1.0
+  bsq_l2_norm: true
+  bsq_inv_temperature: 1.0
+  bsq_persample_entropy_compute: "analytical"
+
+loss:
+  lambdas:
+    recon: 1.0
+    delta: 0.5
+    vq: 0.03
+    recon_chunk: 10.0
+    delta_chunk: 2.0
+    recon_parcel: 10.0
+    recon_network: 10.0
+
+train:
+  epochs: 10
+  batch_size: 4
+  num_workers: 4
+  lr: 2.0e-4
+  weight_decay: 0.01
+  use_amp: true
+  amp_dtype: "bf16"
+  fused_adamw: true
+  enable_tf32: true
+  matmul_precision: "high"
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 4
+  compile: false
+  compile_mode: "default"
+  compile_fullgraph: false
+  chunk_loss_fn: "l1"
+  vq_commitment_warmup_steps: 4000
+  vq_commitment_start: 0.01
+  vq_commitment_end: 0.1
+  bsq_entropy_warmup_steps: 4000
+  bsq_zeta_start: 0.1
+  bsq_zeta_end: 1.0
+  grad_accum_steps: 4
+  grad_clip_norm: 1.0
+  skip_nonfinite_loss: true
+  log_interval: 10
+  ckpt_every: 1

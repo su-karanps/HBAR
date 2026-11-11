@@ -1,0 +1,16 @@
+# HCP-YA resting-state data, DiFuMo-1024 parcels, 18 network groups (Yeo-17 as ids 0..16 plus
+# "No network found" as id 17; see data/fmri_multiscale/atlas.py).
+# Subject-level 877/110/109 train/val/test split. Training windows: 32 TRs, stride 16.
+# Set index_path / layout_dir to your build.
+
+data:
+  index_path: "/path/to/build/merged_index_uncompressed.json"
+  layout_dir: "/path/to/build/layout_shared"
+  # Subject-disjoint train/val/test. Training and model selection only ever see
+  # train/val; every reported number comes from the test subjects.
+  subject_split_json: "data/subject_splits/hcp_ya_1096_80_10_10_seed0.json"
+  window_size: 32
+  stride: 16
+  cache_items: 8
+  shuffle_train: true
+  max_windows_per_subject: null
