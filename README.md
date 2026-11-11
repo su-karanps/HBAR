@@ -3,6 +3,7 @@
 [![Paper](https://img.shields.io/badge/Paper-arXiv%3A2611.11081-b31b1b?style=flat-square)](https://arxiv.org/abs/2611.11081)
 [![NeurIPS 2026](https://img.shields.io/badge/NeurIPS-2026-4B8BBE?style=flat-square)](https://neurips.cc/virtual/2026/loc/sydney/poster/153906)
 [![Website](https://img.shields.io/badge/Project-Website-168b88?style=flat-square)](https://karanps.com/hbar)
+[![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-HBAR-FFD21E?style=flat-square)](https://huggingface.co/karanps/HBAR)
 
 ![HBAR overview](figures/intro.png)
 
